@@ -3,27 +3,26 @@ package com.github.snopoke.safebrowsing2.config
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
-import org.apache.http.client.HttpClient
-import org.apache.http.impl.client.DefaultHttpClient
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager
-import org.apache.http.impl.conn.SchemeRegistryFactory
-import org.apache.http.params.SyncBasicHttpParams
+
 import com.github.snopoke.safebrowsing2.Helpers.isPortAvailable
+import com.github.snopoke.safebrowsing2.Safebrowsing2ServiceServer
+import com.github.snopoke.safebrowsing2.Safebrowsing2UpdateService
+import com.twitter.conversions.time.intToTimeableNumber
 import com.twitter.ostrich.admin.config.ServerConfig
 import com.twitter.ostrich.admin.RuntimeEnvironment
+import com.twitter.ostrich.admin.ServiceTracker
 import com.twitter.ostrich.stats.Stats
+import com.twitter.util.Duration
 import com.twitter.util.FuturePool
-import com.github.snopoke.safebrowsing2.Safebrowsing2ServiceServer
-import net.google.safebrowsing2.db.Storage
-import net.google.safebrowsing2.db.MSSQL
-import net.google.safebrowsing2.db.HSQLDB
-import net.google.safebrowsing2.db.MySQL
+
 import net.google.safebrowsing2.db.DBI
+import net.google.safebrowsing2.db.HSQLDB
+import net.google.safebrowsing2.db.MSSQL
+import net.google.safebrowsing2.db.MySQL
+import net.google.safebrowsing2.db.Storage
 import util.LiteDataSource
 
 class Safebrowsing2Config extends ServerConfig[Safebrowsing2ServiceServer] {
-  
-  val updater = new UpdateServiceConfig()
   
   /**
    * The HTTP Port to run the service on 
@@ -34,13 +33,21 @@ class Safebrowsing2Config extends ServerConfig[Safebrowsing2ServiceServer] {
    * The Google Safe Browsing API Key to use
    */
   var apikey = required[String]
-  updater.apikey = apikey
-  
+
   /**
    * Set useMac to true to request MAC signatures on all data
    */
   var useMac = false
-  updater.useMac = useMac
+  
+  /**
+   * Optional list of blacklist names to update
+   */
+  var lists = optional[Array[String]]
+  
+  /**
+   * The update period
+   */
+  var udpatePeriod: Duration = 1.minute
   
   var name: String = "Safebrowsing2Service"
     
@@ -57,7 +64,6 @@ class Safebrowsing2Config extends ServerConfig[Safebrowsing2ServiceServer] {
   var databaseTablePrefix = "gsb2_"
     
   var storage: Storage = getStorage
-  updater.storage = storage
     
   var threadPoolCoreSize = 0
   var threadPoolMaxSize = 1000
@@ -100,7 +106,10 @@ class Safebrowsing2Config extends ServerConfig[Safebrowsing2ServiceServer] {
 
     runtime = _runtime
 
-    updater()(runtime)
+    val updateService = new Safebrowsing2UpdateService(apikey, storage, useMac, lists, udpatePeriod)
+    updateService.start()
+
+    ServiceTracker.register(updateService)
     
     new Safebrowsing2ServiceServer(this)
   }

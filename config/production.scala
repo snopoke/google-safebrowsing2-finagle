@@ -5,17 +5,20 @@ import com.twitter.ostrich.admin.config._
 import com.addynamo.juggler.config._
 
 // production mode.
-new JugglerConfig {
+new Safebrowsing2Config {
 
   port = @port@
-  redirectLocation = @redirectLocation@
-  redirect = @redirect@
+  apikey = @apikey@
 
-  threadPoolCoreSize = 10
+  useMac = false
+  databaseUrl = @jdbcurl@
+  databaseUsername = @jdbcuser@
+  databasePassword = @jdbcpasswd@
+  databaseTablePrefix = @tableprefix@
+    
+  threadPoolCoreSize = 0
   threadPoolMaxSize = 1000
-  
-  maxConnectionsPerRoute = 100
-  maxConnectionsTotal = 500
+  threadKeepAliveTime = 10L
 
   // Ostrich http admin port.  Curl this for stats, etc
   admin.httpPort = 9990
@@ -26,13 +29,13 @@ new JugglerConfig {
 
   loggers =
     new LoggerConfig {
-      level = Level.INFO
+      level = Level.WARN
       handlers = new FileHandlerConfig {
-        filename = "/var/log/juggler/juggler.log"
+        filename = "/var/log/safebrowsing2/safebrowsing2.log"
         roll = Policy.Daily
       }
     } :: new LoggerConfig {
       level = Level.INFO
-      node = "com.addynamo"
+      node = "com.github.snopoke"
     }
 }

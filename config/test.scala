@@ -6,12 +6,11 @@ import org.mockito.Mockito
 import com.twitter.util.FuturePool
 
 // test mode.
-new JugglerConfig {
+new Safebrowsing2Config {
 
   port = 4243
-  redirectLocation = "http://addelivery"
-  redirect = true
-  
+  apikey = "testkey"
+
   loggers =
     new LoggerConfig {
       level = Level.ERROR
