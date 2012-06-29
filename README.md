@@ -18,22 +18,38 @@ application that need to do local lookup but don't want each one to have to main
 Assuming you have a database setup that you can connect to and that you are installing on Linux then you can use the following
 as a guide to setup the Safebrowsing2 Finagle service.
 
-1. Run sbt package-dist.
-2. Copy dist/safebrowsing2.finagle-X.X.X/safebrowsing2.finagle-X.X.X.zip to the server you want to run it on.
-3. Create the service user and folders:
-	adduser --disabled-login --no-create-home safebrowsing
-	mkdir -p /opt/safebrowsing/releases
-	mkdir -p /var/log/safebrowsing
-	chown -R safebrowsing /var/log/safebrowsing
-	chown -R safebrowsing /opt/safebrowsing
-4. Exctract the service archive:
-	unzip safebrowsing2.finagle-x.x.x.zip /opt/safebrowsing/releases/X.X.X
-	ln -s /opt/safebrowsing/releases/X.X.X /opt/safebrowsing/current
-5. Make the startup script executable:
-	chmod +x /opt/safebrowsing/current/scripts/*.sh
-6. Edit the config:
+	#########################
+	# On your local machine #
+	#########################
+	
+	# Package the service:
+	sbt package-dist
+	
+	# Copy to the server you want to run it on:
+	scp dist/safebrowsing2.finagle-X.X.X/safebrowsing2.finagle-X.X.X.zip youserver:~
+	
+	####################################
+	# Log into the server and continue #
+	####################################
+	
+	# Create the service user and folders:
+	sudo adduser --disabled-login --no-create-home safebrowsing
+	sudo mkdir -p /opt/safebrowsing/releases
+	sudo mkdir -p /var/log/safebrowsing
+	sudo chown -R safebrowsing /var/log/safebrowsing
+	sudo chown -R safebrowsing /opt/safebrowsing
+	
+	# Exctract the service archive:
+	sudo unzip safebrowsing2.finagle-x.x.x.zip -d /opt/safebrowsing/releases/X.X.X
+	sudo ln -s /opt/safebrowsing/releases/X.X.X /opt/safebrowsing/current
+	
+	# Make the startup script executable:
+	sudo chmod +x /opt/safebrowsing/current/scripts/*.sh
+	
+	# Edit the config:
 	sudo vi /opt/safebrowsing/current/config/production.scala
-7. Start the service and watch the log files:
+	
+	# Start the service and watch the log files:
 	sudo /opt/safebrowsing/current/scripts/service.sh start
 	tail -f /var/log/safebrowsing/safebrowsing.log /var/log/safebrowsing/safebrowsing.out
 
@@ -41,7 +57,7 @@ as a guide to setup the Safebrowsing2 Finagle service.
 Once the database is up to date (this may take some time) you can use the Safebrowsing2 Scala library (or any other library that 
 implements the Lookup API to query the database.
 
-	val api = new Lookup(apikey, "myapp", "http://<ip or host>:port/", "3.0")
+	val api = new Lookup(apikey, "myapp", "http://<ip or host where service is running>:port/", "3.0")
 	val resp = api.lookup(Array("http://www.google.com/", "http://ianfette.org/"))
 	resp.foreach{
 		case (url, result) => println(url+" -> "+result)
