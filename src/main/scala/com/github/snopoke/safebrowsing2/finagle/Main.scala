@@ -1,4 +1,4 @@
-package com.github.snopoke.safebrowsing2
+package com.github.snopoke.safebrowsing2.finagle
 
 import com.twitter.logging.Logger
 import com.twitter.ostrich.admin.RuntimeEnvironment

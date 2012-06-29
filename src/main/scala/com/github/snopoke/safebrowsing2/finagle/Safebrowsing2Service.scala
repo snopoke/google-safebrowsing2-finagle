@@ -1,4 +1,4 @@
-package com.github.snopoke.safebrowsing2
+package com.github.snopoke.safebrowsing2.finagle
 
 import java.net.InetSocketAddress
 import org.apache.http.client.HttpClient

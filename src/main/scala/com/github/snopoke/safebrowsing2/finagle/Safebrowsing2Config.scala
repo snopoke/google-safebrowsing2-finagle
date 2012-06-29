@@ -1,12 +1,10 @@
-package com.github.snopoke.safebrowsing2.config
+package com.github.snopoke.safebrowsing2.finagle
 
 import java.util.concurrent.SynchronousQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-import com.github.snopoke.safebrowsing2.Helpers.isPortAvailable
-import com.github.snopoke.safebrowsing2.Safebrowsing2ServiceServer
-import com.github.snopoke.safebrowsing2.Safebrowsing2UpdateService
+import com.github.snopoke.safebrowsing2.finagle.Helpers.isPortAvailable
 import com.twitter.conversions.time.intToTimeableNumber
 import com.twitter.ostrich.admin.config.ServerConfig
 import com.twitter.ostrich.admin.RuntimeEnvironment
@@ -63,7 +61,7 @@ class Safebrowsing2Config extends ServerConfig[Safebrowsing2ServiceServer] {
    */
   var databaseTablePrefix = "gsb2_"
     
-  var storage: Storage = getStorage
+  lazy val storage: Storage = getStorage
     
   var threadPoolCoreSize = 0
   var threadPoolMaxSize = 1000
@@ -90,11 +88,11 @@ class Safebrowsing2Config extends ServerConfig[Safebrowsing2ServiceServer] {
         if (databaseUrl.contains(":mem:")) {
           Console.withOut(Console.err) { println("WARNING: in memory database being used. Data will be lost on shutdown") }
         }
-        new HSQLDB(LiteDataSource.driverManager(databaseUrl, databaseUrl, databasePassword), databaseTablePrefix)
+        new HSQLDB(LiteDataSource.driverManager(databaseUrl, databaseUsername, databasePassword), databaseTablePrefix)
       }
-      case "mysql" => new MySQL(LiteDataSource.driverManager(databaseUrl, databaseUrl, databasePassword), databaseTablePrefix)
-      case "sqlserver" => new MSSQL(LiteDataSource.driverManager(databaseUrl, databaseUrl, databasePassword), databaseTablePrefix)
-      case _ => new DBI(LiteDataSource.driverManager(databaseUrl, databaseUrl, databasePassword), databaseTablePrefix)
+      case "mysql" => new MySQL(LiteDataSource.driverManager(databaseUrl, databaseUsername, databasePassword), databaseTablePrefix)
+      case "sqlserver" => new MSSQL(LiteDataSource.driverManager(databaseUrl, databaseUsername, databasePassword), databaseTablePrefix)
+      case _ => new DBI(LiteDataSource.driverManager(databaseUrl, databaseUsername, databasePassword), databaseTablePrefix)
     }
   }
 

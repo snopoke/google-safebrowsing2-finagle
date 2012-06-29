@@ -1,8 +1,7 @@
-package com.github.snopoke.safebrowsing2
+package com.github.snopoke.safebrowsing2.finagle
 
 import com.twitter.conversions.time.intToTimeableNumber
 import com.twitter.ostrich.admin.{Service => OstrichService}
-import com.github.snopoke.safebrowsing2.config.Safebrowsing2Config
 import net.google.safebrowsing2.SafeBrowsing2
 
 class Safebrowsing2ServiceServer(config: Safebrowsing2Config) extends OstrichService with Safebrowsing2Service {

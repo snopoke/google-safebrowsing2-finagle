@@ -5,9 +5,11 @@ seq((
   StandardProject.newSettings
 ): _*)
 
+resolvers ++= Seq(Resolver.defaultLocal, Resolver.mavenLocal)
+
 organization := "com.github.snopoke"
 
-name := "safebrowsing"
+name := "safebrowsing2.finagle"
 
 version := "0.1.0"
 
@@ -25,9 +27,9 @@ libraryDependencies ++= Seq(
   "com.twitter" %% "scalatest-mixins" % "1.0.0" % "test"
 )
 
-mainClass in (Compile, run) := Some("com.github.snopoke.safebrowsing2.Main")
+mainClass in (Compile, run) := Some("com.github.snopoke.safebrowsing2.finagle.Main")
 
-mainClass in (Compile, packageBin) := Some("com.github.snopoke.safebrowsing2.Main")
+mainClass in (Compile, packageBin) := Some("com.github.snopoke.safebrowsing2.finagle.Main")
 
 scalacOptions ++= Seq("-unchecked", "-deprecation")
 

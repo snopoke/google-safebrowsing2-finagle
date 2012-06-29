@@ -1,4 +1,4 @@
-package com.github.snopoke.safebrowsing2
+package com.github.snopoke.safebrowsing2.finagle
 import java.net.ConnectException
 import java.net.Socket
 import java.net.URLDecoder

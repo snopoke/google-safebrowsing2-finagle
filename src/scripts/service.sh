@@ -15,10 +15,10 @@ set -o nounset
 # Set this to your Java installation
 JAVA_HOME=/usr/lib/jre
 
-serviceNameLo="safebrowsing2"                               #service name with the first letter in lowercase
+serviceNameLo="safebrowsing"                               #service name with the first letter in lowercase
 serviceVersion="0.1.0"
-serviceJar="${serviceNameLo}_2.9.1-${serviceVersion}.jar"
-servicePort=8080
+serviceJar="${serviceNameLo}2.finagle_2.9.1-${serviceVersion}.jar"
+servicePort=8082
 serviceAdminPort=9990
 
 serviceName="Safebrowsing2"                                 # service name
@@ -27,7 +27,7 @@ serviceGroup="safebrowsing"                                 # OS group name for 
 
 applDir="/opt/$serviceNameLo/current"                       # home directory of the service application
 serviceLogFile="/var/log/$serviceNameLo/$serviceNameLo.out" # log file for StdOut/StdErr
-maxStartupTime=10                                           # maximum number of seconts to wait for daemon to startup
+maxStartupTime=20                                           # maximum number of seconts to wait for daemon to startup
 maxShutdownTime=15                                          # maximum number of seconds to wait for the daemon to terminate normally
 pidFile="/var/run/$serviceNameLo.pid"                       # name of PID file (PID = process ID number)
 javaCommand=java                                            # name of the Java launcher without the path

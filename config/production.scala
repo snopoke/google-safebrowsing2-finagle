@@ -2,19 +2,19 @@ import com.twitter.conversions.storage._
 import com.twitter.conversions.time._
 import com.twitter.logging.config._
 import com.twitter.ostrich.admin.config._
-import com.addynamo.juggler.config._
+import com.github.snopoke.safebrowsing2.finagle._
 
 // production mode.
 new Safebrowsing2Config {
 
   port = @port@
-  apikey = @apikey@
+  apikey = "@apikey@"
 
   useMac = false
-  databaseUrl = @jdbcurl@
-  databaseUsername = @jdbcuser@
-  databasePassword = @jdbcpasswd@
-  databaseTablePrefix = @tableprefix@
+  databaseUrl = "@jdbcurl@"
+  databaseUsername = "@jdbcuser@"
+  databasePassword = "@jdbcpasswd@"
+  databaseTablePrefix = "@tableprefix@"
     
   threadPoolCoreSize = 0
   threadPoolMaxSize = 1000
@@ -29,13 +29,16 @@ new Safebrowsing2Config {
 
   loggers =
     new LoggerConfig {
-      level = Level.WARN
+      level = Level.WARNING
       handlers = new FileHandlerConfig {
-        filename = "/var/log/safebrowsing2/safebrowsing2.log"
+        filename = "/var/log/safebrowsing/safebrowsing.log"
         roll = Policy.Daily
       }
     } :: new LoggerConfig {
       level = Level.INFO
       node = "com.github.snopoke"
+    } :: new LoggerConfig {
+      level = Level.OFF
+	  node = "dbstats"
     }
 }
